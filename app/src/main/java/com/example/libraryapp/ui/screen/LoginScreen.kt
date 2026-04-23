@@ -7,11 +7,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,11 +25,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.libraryapp.ui.viewmodel.AuthState
+import com.example.libraryapp.ui.viewmodel.AuthViewModel
+import org.w3c.dom.Text
 
 
 @Composable
 fun LoginScreen()
 {
+    val authViewModel: AuthViewModel = viewModel() // navigation ekranına taşı
+    val authState by authViewModel.authState.collectAsState()
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -36,6 +47,7 @@ fun LoginScreen()
         Spacer(modifier = Modifier.height(8.dp))
         Text("Giriş Yap")
         OutlinedTextField(
+            enabled = authState !is AuthState.Loading,
             modifier = Modifier.fillMaxWidth(),
             value = email,
             label = {Text("E-posta")},
@@ -45,6 +57,7 @@ fun LoginScreen()
         )
         Spacer(modifier = Modifier.height(10.dp))
         OutlinedTextField(
+            enabled = authState !is AuthState.Loading, //loading durumunda işlem yapamazsın şifreye
             modifier = Modifier.fillMaxWidth(),
             value = password,
             label = { Text("Şifre")},
@@ -54,8 +67,25 @@ fun LoginScreen()
             visualTransformation = PasswordVisualTransformation() //şifreyi gizler
         )
         Spacer(modifier = Modifier.height(10.dp))
-        Button(onClick = {}, modifier = Modifier.fillMaxWidth()) {
-            Text("Giriş Yap")
+
+        if(authState is AuthState.Loading)
+        {
+            Button(onClick = {}, modifier = Modifier.fillMaxWidth()) {
+                CircularProgressIndicator(modifier = Modifier.size(20.dp),
+                    strokeWidth = 2.dp,
+                    color = MaterialTheme.colorScheme.onPrimary)
+            }
+        }else {
+            Button(onClick = {
+                authViewModel.signIn(email,password)
+            }, modifier = Modifier.fillMaxWidth()) {
+                Text("Giriş Yap")
+            }
         }
+
+        if (authState is AuthState.Success)
+            Text("Giriş yapıldı")
+        else if (authState is AuthState.Error)
+            Text((authState as AuthState.Error).message)
     }
 }
