@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,13 +26,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.libraryapp.ui.navigation.Screen
 import com.example.libraryapp.ui.viewmodel.AuthState
 import com.example.libraryapp.ui.viewmodel.AuthViewModel
-
-
+import kotlinx.coroutines.delay
 
 @Composable
-fun LoginScreen(authViewModel : AuthViewModel)
+fun SignUpScreen(navController: NavController, authViewModel: AuthViewModel)
 {
 
     val authState by authViewModel.authState.collectAsState()
@@ -39,20 +41,28 @@ fun LoginScreen(authViewModel : AuthViewModel)
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+    LaunchedEffect(authState) {
+        if (authState is AuthState.Success) {
+            delay(3000)
+            navController.navigate(Screen.Login.route)
+        }
+    }
+
     Column(modifier = Modifier.fillMaxSize().padding(24.dp),
-    horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.Center){
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center) {
         Text("Kütüphane Sistemi")
         Spacer(modifier = Modifier.height(8.dp))
-        Text("Giriş Yap")
+        Text("Kayıt Ol")
+        Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
             enabled = authState !is AuthState.Loading,
             modifier = Modifier.fillMaxWidth(),
             value = email,
             label = {Text("E-posta")},
-            onValueChange = { value -> email = value},
-            singleLine = true, //tek satırlık imput olur enter yaptıkça alt satıra geçemez
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email) // açılan klavyenin türünü seçeriz
+            onValueChange = {value -> email = value},
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )
         Spacer(modifier = Modifier.height(10.dp))
         OutlinedTextField(
@@ -76,14 +86,21 @@ fun LoginScreen(authViewModel : AuthViewModel)
             }
         }else {
             Button(onClick = {
-                authViewModel.signIn(email,password)
+                authViewModel.signUp(email,password)
             }, modifier = Modifier.fillMaxWidth()) {
-                Text("Giriş Yap")
+                Text("Kayıt Ol")
             }
         }
 
-        if (authState is AuthState.Success)
-            Text("Giriş yapıldı")
+
+        if (authState is AuthState.Success) {
+            Text("Kayıt Olundu")
+            Spacer(modifier = Modifier.height(8.dp))
+            CircularProgressIndicator(modifier = Modifier.size(24.dp),
+                strokeWidth = 2.dp)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Giriş sayfasına yönlendiriliyorsunuz")
+        }
         else if (authState is AuthState.Error)
             Text((authState as AuthState.Error).message)
     }

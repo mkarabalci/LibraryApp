@@ -6,7 +6,7 @@ import com.example.libraryapp.data.repository.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlin.math.exp
+
 
 //Sistem bu 4ünden birinde olabilir
 sealed class AuthState {
@@ -15,6 +15,7 @@ sealed class AuthState {
     data class Success(val role: String) : AuthState() //
     data class  Error(val message: String) : AuthState()
 }
+
 
 
 class AuthViewModel : ViewModel()
@@ -32,6 +33,19 @@ class AuthViewModel : ViewModel()
                 .signIn(email,password)
                 .onSuccess { result -> _authState.value = AuthState.Success("student") }
                 .onFailure { ex -> _authState.value = AuthState.Error(ex.message ?: "Giriş başarısız") }
+        }
+
+    }
+
+
+    fun signUp(email: String, password: String)
+    {
+        viewModelScope.launch {
+            _authState.value = AuthState.Loading
+            repository
+                .signUp(email,password)
+                .onSuccess { result -> _authState.value = AuthState.Success("person") }
+                .onFailure { ex -> _authState.value = AuthState.Error(ex.message ?: "Kayıt başarısız") }
         }
 
     }
