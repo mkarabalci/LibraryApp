@@ -1,8 +1,10 @@
 package com.example.libraryapp.data.repository
 
+import com.example.libraryapp.data.model.Profile
 import com.example.libraryapp.data.supabase.supabase
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
+import io.github.jan.supabase.postgrest.postgrest
 
 
 class AuthRepository
@@ -26,6 +28,10 @@ class AuthRepository
         }
 
         val userId = supabase.auth.currentUserOrNull()?.id ?: error("Kullanıcı bulunamadı")
-        println(userId)
+
+        supabase.postgrest["profiles"].insert(
+            Profile(userId, "student", fullName, studentNo)
+        )
+
     }
 }
