@@ -19,7 +19,14 @@ fun NavGraph (navController: NavHostController = rememberNavController())
 
     NavHost(navController = navController, startDestination = Screen.Register.route)
     {
-        composable (Screen.Login.route) { LoginScreen(authViewModel) }
-        composable (Screen.Register.route) { SignUpScreen(navController, authViewModel) }
+        composable(Screen.Login.route) { LoginScreen(
+            onNavigateToRegister = { navController.navigate(Screen.Register.route) },
+            onLoginSuccess = {role -> {}},
+            authViewModel
+        ) }
+        composable (Screen.Register.route) { SignUpScreen(
+            onNavigateToLogin = { navController.navigate(Screen.Login.route) },
+            authViewModel
+        ) }
     }
 }

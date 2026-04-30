@@ -29,14 +29,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.example.libraryapp.ui.navigation.Screen
 import com.example.libraryapp.ui.viewmodel.AuthState
 import com.example.libraryapp.ui.viewmodel.AuthViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun SignUpScreen(navController: NavController, authViewModel: AuthViewModel)
+fun SignUpScreen(
+    onNavigateToLogin: () -> Unit,
+    authViewModel: AuthViewModel)
 {
 
     val authState by authViewModel.authState.collectAsState()
@@ -49,7 +49,7 @@ fun SignUpScreen(navController: NavController, authViewModel: AuthViewModel)
     LaunchedEffect(authState) {
         if (authState is AuthState.Success) {
             delay(3000)
-            navController.navigate(Screen.Login.route)
+            onNavigateToLogin()
         }
     }
 
@@ -129,7 +129,7 @@ fun SignUpScreen(navController: NavController, authViewModel: AuthViewModel)
             Text(text = (authState as AuthState.Error).message, color = MaterialTheme.colorScheme.error)
 
         Spacer(modifier = Modifier.height(12.dp))
-        TextButton(onClick = { navController.navigate(Screen.Login.route) }) {
+        TextButton(onClick = { onNavigateToLogin() }) {
             Text("Zaten hesabın var mı? Giriş Yap")
         }
     }
