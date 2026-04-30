@@ -34,4 +34,15 @@ class AuthRepository
         )
 
     }
+
+    fun getCurrentUserId() : String? //o anki user Id sini geri dönen fonksiyon
+    {
+        return supabase.auth.currentUserOrNull()?.id
+    }
+
+    suspend fun  getProfile(userId: String): Profile? =runCatching {
+        supabase.postgrest["profiles"]
+            .select { filter { eq("user_id", userId) } }
+            .decodeSingle<Profile>()
+    }.getOrNull()
 }
