@@ -37,11 +37,11 @@ class AuthViewModel : ViewModel()
             repository
                 .signIn(email,password)
                 .onSuccess {
-                    val userId = repository.getCurrentUserId()
+                    val userId = repository.getCurrentUserId() //userId geliyo mu
                     if(userId != null)
                     {
-                        val profile = repository.getProfile(userId)
-                        _profile.value = profile
+                        val profile = repository.getProfile(userId) //profile geliyo mu
+                        _profile.value = profile // doğru set ediliyor mu
                         _authState.value = AuthState.Success("student")
                     }else{
                         _authState.value = AuthState.Error("Profil bulunamadı.")
