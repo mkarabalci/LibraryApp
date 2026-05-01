@@ -25,5 +25,32 @@ class BookRepository {
         supabase.postgrest["books"].insert(book)
     }
 
+    //Güncelleme
+    suspend fun updateBook(id: String, book: Book): Result<Unit> = runCatching {
+        supabase.postgrest["books"]
+            .update({
+                set("title", book.title)
+                set("author", book.author)
+                set("isbn", book.isbn)
+                set("category", book.category)
+                set("page_count", book.pageCount)
+                set("total_copies", book.totalCopies)
+                set("available_copies", book.availableCopies)
+            }) { filter { eq("id", id) } }
+    }
+
+    //Silme
+    suspend fun deleteBook(id: String): Result<Unit> = runCatching {
+        supabase.postgrest["books"]
+            .delete { filter { eq("id", id) } }
+    }
+
+    //Arama
+    suspend fun searchBook(query: String) : Result<List<Book>> = runCatching {
+        supabase.postgrest["books"]
+            .select { filter { ilike("title", "%$query%") } }
+            .decodeList<Book>()
+    }
+
 }
 
