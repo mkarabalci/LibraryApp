@@ -11,12 +11,14 @@ import com.example.libraryapp.ui.screen.HomeScreen
 import com.example.libraryapp.ui.screen.LoginScreen
 import com.example.libraryapp.ui.screen.SignUpScreen
 import com.example.libraryapp.ui.viewmodel.AuthViewModel
+import com.example.libraryapp.ui.viewmodel.BookViewModel
 
 
 @Composable
 fun NavGraph (navController: NavHostController = rememberNavController())
 {
     val authViewModel: AuthViewModel = viewModel()
+    val bookViewModel: BookViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = Screen.Login.route)
     {
@@ -33,8 +35,8 @@ fun NavGraph (navController: NavHostController = rememberNavController())
             onNavigateToLogin = { navController.navigate(Screen.Login.route) },
             authViewModel
         ) }
-        composable(Screen.HomePage.route) { HomeScreen(
-            authViewModel
-        ) }
+        composable(Screen.HomePage.route) {
+            HomeScreen(authViewModel, bookViewModel)
+        }
     }
 }
