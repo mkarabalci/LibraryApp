@@ -59,7 +59,17 @@ class AuthViewModel : ViewModel()
             _authState.value = AuthState.Loading
             repository
                 .signUp(email,password,fullName,studentNo)
-                .onSuccess { result -> _authState.value = AuthState.Success("student") }
+                .onSuccess {
+                    // Otomatik giriş yapıldığı için profili de çekeriz
+                    val userId = repository.getCurrentUserId()
+                    if (userId != null) {
+                        val profile = repository.getProfile(userId)
+                        _profile.value = profile
+                        _authState.value = AuthState.Success(profile?.role ?: "student")
+                    } else {
+                        _authState.value = AuthState.Error("Profil bulunamadı.")
+                    }
+                }
                 .onFailure { ex -> _authState.value = AuthState.Error(ex.message ?: "Kayıt başarısız") }
         }
 

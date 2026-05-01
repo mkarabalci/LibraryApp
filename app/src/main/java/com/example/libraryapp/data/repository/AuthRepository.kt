@@ -33,6 +33,11 @@ class AuthRepository
             Profile(userId, "student", fullName, studentNo)
         )
 
+        // Kayıt sonrası otomatik giriş
+        supabase.auth.signInWith(Email) {
+            this.email = email
+            this.password = password
+        }
     }
 
     fun getCurrentUserId() : String? //o anki user Id sini geri dönen fonksiyon

@@ -33,6 +33,11 @@ fun NavGraph (navController: NavHostController = rememberNavController())
         ) }
         composable (Screen.Register.route) { SignUpScreen(
             onNavigateToLogin = { navController.navigate(Screen.Login.route) },
+            onNavigateToHome = {
+                navController.navigate(Screen.HomePage.route) {
+                    popUpTo(Screen.Login.route) { inclusive = true }
+                }
+            },
             authViewModel
         ) }
         composable(Screen.HomePage.route) {

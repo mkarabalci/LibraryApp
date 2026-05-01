@@ -36,6 +36,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun SignUpScreen(
     onNavigateToLogin: () -> Unit,
+    onNavigateToHome: () -> Unit,
     authViewModel: AuthViewModel)
 {
 
@@ -49,7 +50,8 @@ fun SignUpScreen(
     LaunchedEffect(authState) {
         if (authState is AuthState.Success) {
             delay(3000)
-            onNavigateToLogin()
+            authViewModel.resetState()
+            onNavigateToHome() // login yerine direkt home'a
         }
     }
 
