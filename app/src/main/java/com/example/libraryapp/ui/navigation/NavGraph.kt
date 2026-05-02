@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.libraryapp.ui.screen.HomeScreen
 import com.example.libraryapp.ui.screen.LoginScreen
 import com.example.libraryapp.ui.screen.SignUpScreen
+import com.example.libraryapp.ui.screen.SplashScreen
 import com.example.libraryapp.ui.viewmodel.AuthViewModel
 import com.example.libraryapp.ui.viewmodel.BookViewModel
 
@@ -20,8 +21,23 @@ fun NavGraph (navController: NavHostController = rememberNavController())
     val authViewModel: AuthViewModel = viewModel()
     val bookViewModel: BookViewModel = viewModel()
 
-    NavHost(navController = navController, startDestination = Screen.Login.route)
+    NavHost(navController = navController, startDestination = Screen.Splash.route)
     {
+        composable (Screen.Splash.route) { SplashScreen(
+            authViewModel,
+            onAuthenticated = { role ->
+                navController.navigate(Screen.HomePage.route)
+                {
+                    popUpTo(Screen.Splash.route) {inclusive=true}
+                }
+            },
+            onUnauthenticated = {
+                navController.navigate(Screen.Login.route)
+                {
+                    popUpTo(Screen.Splash.route) {inclusive=true}
+                }
+            }
+        ) }
         composable(Screen.Login.route) { LoginScreen(
             onNavigateToRegister = { navController.navigate(Screen.Register.route) },
             onLoginSuccess = {role ->
