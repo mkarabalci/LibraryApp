@@ -122,4 +122,13 @@ class AuthViewModel : ViewModel()
     fun resetState() {
         _authState.value = AuthState.Idle
     }
+
+    //tekrar giriş yaptığımızda anasayfa açılır her seferinde giriş yapmamış oluruz
+    fun signOut() {
+        viewModelScope.launch {
+            repository.signOut()
+            _profile.value = null
+            _authState.value = AuthState.Idle
+        }
+    }
 }

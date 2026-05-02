@@ -40,6 +40,10 @@ class AuthRepository
         }
     }
 
+    suspend fun signOut() {
+        supabase.auth.signOut()
+    }
+
     fun getCurrentUserId() : String? //o anki user Id sini geri dönen fonksiyon
     {
         return supabase.auth.currentUserOrNull()?.id

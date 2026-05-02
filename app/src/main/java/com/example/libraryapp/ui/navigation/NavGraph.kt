@@ -18,7 +18,7 @@ import com.example.libraryapp.ui.viewmodel.BookViewModel
 @Composable
 fun NavGraph (navController: NavHostController = rememberNavController())
 {
-    val authViewModel: AuthViewModel = viewModel()
+    val authViewModel: AuthViewModel = viewModel() //oluşturulma aşaması
     val bookViewModel: BookViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = Screen.Splash.route)
