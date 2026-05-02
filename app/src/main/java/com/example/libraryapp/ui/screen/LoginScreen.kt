@@ -43,6 +43,7 @@ fun LoginScreen(
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf("") }
 
     // Yalnızca authState değişirse çalış, tüm recompositionlarda değil..
     LaunchedEffect(authState) {
@@ -91,10 +92,25 @@ fun LoginScreen(
             }
         }else {
             Button(onClick = {
-                authViewModel.signIn(email,password)
-            }, modifier = Modifier.fillMaxWidth()) {
+                when {
+                    email.isBlank() -> errorMessage = "E-posta boş bırakılamaz"
+                    password.isBlank() -> errorMessage = "Şifre boş bırakılamaz"
+                    else -> {
+                        errorMessage = ""
+                        authViewModel.signIn(email, password)
+                    }
+                }
+            }, modifier = Modifier.fillMaxWidth() )
+            {
                 Text("Giriş Yap")
             }
+        }
+
+        if (errorMessage.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = errorMessage,
+                color = MaterialTheme.colorScheme.error)
         }
 
         TextButton(onClick = {

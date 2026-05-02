@@ -46,6 +46,7 @@ fun SignUpScreen(
     var password by remember { mutableStateOf("") }
     var fullName by remember { mutableStateOf("") }
     var studentNo by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf("") }
 
     LaunchedEffect(authState) {
         if (authState is AuthState.Success) {
@@ -107,15 +108,37 @@ fun SignUpScreen(
         )
         Spacer(modifier = Modifier.height(10.dp))
 
-        Button(
-            onClick = { authViewModel.signUp(email, password, fullName, studentNo) },
+        Button(onClick = {
+                when {
+                    fullName.isBlank() -> errorMessage = "Ad soyad boş bırakılamaz"
+                    email.isBlank() -> errorMessage = "E-posta boş bırakılamaz"
+                    password.isBlank() -> errorMessage = "Şifre boş bırakılamaz"
+                    password.length < 6 -> errorMessage = "Şifre en az 6 karakter olmalı"
+                    else -> {
+                        errorMessage = ""
+                        authViewModel.signUp(email, password, fullName, studentNo)
+                    }
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
             enabled = authState !is AuthState.Loading
         ) {
             if (authState is AuthState.Loading)
-                CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.onPrimary)
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    strokeWidth = 2.dp,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
             else
                 Text("Kayıt Ol")
+        }
+
+        if (errorMessage.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = errorMessage,
+                color = MaterialTheme.colorScheme.error
+            )
         }
 
 
