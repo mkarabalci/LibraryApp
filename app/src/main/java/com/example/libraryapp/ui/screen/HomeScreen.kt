@@ -25,18 +25,36 @@ import com.example.libraryapp.ui.viewmodel.AuthViewModel
 import com.example.libraryapp.ui.viewmodel.BookViewModel
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import com.example.libraryapp.ui.viewmodel.BorrowViewModel
 
 
 @Composable
 fun HomeScreen(
     authViewModel: AuthViewModel,
-    bookViewModel: BookViewModel
+    bookViewModel: BookViewModel,
+    borrowViewModel: BorrowViewModel
 ) {
     val profileState by authViewModel.profile.collectAsState()
     val books by bookViewModel.books.collectAsState()
     val isLoading by bookViewModel.isLoading.collectAsState()
+    val borrowError by borrowViewModel.error.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    Scaffold { paddingValues ->
+    LaunchedEffect(borrowError) {
+        if (borrowError != null) {
+            snackbarHostState.showSnackbar(borrowError!!)
+            borrowViewModel.resetError()
+        }
+    }
+
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -57,10 +75,16 @@ fun HomeScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(books, key = { it.id }) { book ->
-                        BookCard(book = book)
+                        BookCard(book = book,
+                            onBorrowClick = { bookId ->
+                                val studentId = authViewModel.profile.value?.userId ?: return@BookCard
+                                borrowViewModel.addBorrowRecord(studentId, bookId)
+                            }
+                        )
                     }
                 }
             }
+
         }
     }
 }

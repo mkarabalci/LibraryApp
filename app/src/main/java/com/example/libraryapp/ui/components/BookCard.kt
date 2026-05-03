@@ -21,7 +21,10 @@ import androidx.compose.ui.unit.sp
 import com.example.libraryapp.data.model.Book
 
 @Composable
-fun BookCard(book: Book) {
+fun BookCard(
+    book: Book,
+    onBorrowClick: (bookId: String) -> Unit
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
 
@@ -53,7 +56,8 @@ fun BookCard(book: Book) {
                 fontSize = 11.sp
             )
             if (book.availableCopies >0) {
-                Button(onClick = {}, modifier = Modifier.fillMaxWidth()) {
+                Button(onClick = { onBorrowClick(book.id) },
+                    modifier = Modifier.fillMaxWidth()) {
                     Text("Ödünç Al")
                 }
             } else {

@@ -2,6 +2,8 @@ package com.example.libraryapp.ui.navigation
 
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -13,6 +15,7 @@ import com.example.libraryapp.ui.screen.SignUpScreen
 import com.example.libraryapp.ui.screen.SplashScreen
 import com.example.libraryapp.ui.viewmodel.AuthViewModel
 import com.example.libraryapp.ui.viewmodel.BookViewModel
+import com.example.libraryapp.ui.viewmodel.BorrowViewModel
 
 
 @Composable
@@ -20,6 +23,13 @@ fun NavGraph (navController: NavHostController = rememberNavController())
 {
     val authViewModel: AuthViewModel = viewModel() //oluşturulma aşaması
     val bookViewModel: BookViewModel = viewModel()
+    val borrowViewModel: BorrowViewModel = viewModel(
+        factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return BorrowViewModel(bookViewModel) as T
+            }
+        }
+    )
 
     NavHost(navController = navController, startDestination = Screen.Splash.route)
     {
@@ -57,7 +67,7 @@ fun NavGraph (navController: NavHostController = rememberNavController())
             authViewModel
         ) }
         composable(Screen.HomePage.route) {
-            HomeScreen(authViewModel, bookViewModel)
+            HomeScreen(authViewModel, bookViewModel, borrowViewModel)
         }
     }
 }

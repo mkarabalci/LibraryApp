@@ -22,6 +22,8 @@ class BookRepository {
 
     //kitap ekleme
     suspend fun addBook(book: Book): Result<Unit> = runCatching {
+        if (book.title.length < 3)
+            return@runCatching
         supabase.postgrest["books"].insert(book)
     }
 
