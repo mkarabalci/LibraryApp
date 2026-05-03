@@ -1,11 +1,13 @@
 package com.example.libraryapp.ui.components
 
+import android.R
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -50,6 +52,18 @@ fun BookCard(book: Book) {
                 text = "${book.availableCopies}/${book.totalCopies} mevcut",
                 fontSize = 11.sp
             )
+            if (book.availableCopies >0) {
+                Button(onClick = {}, modifier = Modifier.fillMaxWidth()) {
+                    Text("Ödünç Al")
+                }
+            } else {
+                Text(
+                    text = "Stokta yok",
+                    color = MaterialTheme.colorScheme.error,
+                    fontSize = 12.sp
+                )
+            }
+
         }
     }
 }
