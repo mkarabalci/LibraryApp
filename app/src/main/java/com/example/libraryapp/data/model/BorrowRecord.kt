@@ -10,6 +10,12 @@ data class BorrowRecord (
     @SerialName("book_id") val bookId: String,
     @SerialName("borrowed_at") val borrowedAt: String? = null,
     @SerialName("due_date") val dueDate: String = "",
-    @SerialName("returned_at") val returnedAt: String? = null
-) {
+    @SerialName("returned_at") val returnedAt: String? = null,
+    val books: BookInfo? = null // join ile gelecek
+)
+@Serializable
+data class BookInfo(
+    val title: String,
+    val author: String
+){
 }

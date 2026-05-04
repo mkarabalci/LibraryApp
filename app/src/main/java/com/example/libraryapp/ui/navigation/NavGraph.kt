@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.libraryapp.ui.screen.BorrowScreen
 import com.example.libraryapp.ui.screen.HomeScreen
 import com.example.libraryapp.ui.screen.LoginScreen
 import com.example.libraryapp.ui.screen.SignUpScreen
@@ -66,8 +67,16 @@ fun NavGraph (navController: NavHostController = rememberNavController())
             },
             authViewModel
         ) }
-        composable(Screen.HomePage.route) {
-            HomeScreen(authViewModel, bookViewModel, borrowViewModel)
-        }
+        composable(Screen.HomePage.route) { HomeScreen(
+            authViewModel, bookViewModel, borrowViewModel,
+            onNavigateToBorrows = {
+                navController.navigate(Screen.Borrows.route)
+            }) }
+        composable (Screen.Borrows.route) { BorrowScreen(
+            authViewModel,
+            borrowViewModel,
+            onNavigateBack = { navController.popBackStack() }
+        ) }
+
     }
 }
